@@ -11,6 +11,8 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,23 +20,40 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    @stack('styles')
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                @if(Auth::check() == false)
+                <a class="navbar-brand text-bold" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
+                @endif
+                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-
+                   @if(Auth::check())
+                     <!-- Left Side Of Navbar -->
+                     <ul class="navbar-nav me-auto">\
+                        <li class="nav-item">
+                            <!-- Jika route beranda maka akan menambahkan kelas active -->
+                            <a class="nav-link {{ request()->is('beranda') ? 'active' : '' }}" href="{{ route('beranda') }}">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Mahasiswa</a>
+                        </li>
+                        <li class="nav-item">
+                            <!-- Jika route jurusan maka akan menambahkan kelas active -->
+                            <a class="nav-link {{ request()->is('jurusan') ? 'active' : '' }}" href="{{ route('jurusan.index') }}">Jurusan</a>
+                        </li>
                     </ul>
+                   @endif
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
@@ -46,11 +65,11 @@
                                 </li>
                             @endif
 
-                            @if (Route::has('register'))
+                            <!-- @if (Route::has('register'))
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
-                            @endif
+                            @endif -->
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -79,5 +98,7 @@
             @yield('content')
         </main>
     </div>
+
+    @stack('scripts')
 </body>
 </html>

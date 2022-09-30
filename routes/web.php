@@ -14,9 +14,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // Redirect ke halaman login
+    return redirect()->route('login');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Middleware untuk mengecek apakah user sudah login atau belum
+Route::group(['middleware' => 'auth'], function () {
+    // Route untuk mengakses home.blade pada HomeController
+    Route::get('/beranda', [App\Http\Controllers\HomeController::class, 'index'])->name('beranda');
+    
+    // Group function untuk jurusan
+    Route::group(['prefix' => 'jurusan'], function () {
+        Route::get('/', [App\Http\Controllers\JurusanController::class, 'index'])->name('jurusan.index');
+        Route::get('/create', [App\Http\Controllers\JurusanController::class, 'create'])->name('jurusan.create');
+        Route::post('/store', [App\Http\Controllers\JurusanController::class, 'store'])->name('jurusan.store');
+        Route::get('/edit/{id}', [App\Http\Controllers\JurusanController::class, 'edit'])->name('jurusan.edit');
+        Route::post('/update/{id}', [App\Http\Controllers\JurusanController::class, 'update'])->name('jurusan.update');
+        Route::get('/delete/{id}', [App\Http\Controllers\JurusanController::class, 'destroy'])->name('jurusan.destroy');
+    });
+});
